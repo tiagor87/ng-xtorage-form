@@ -40,6 +40,7 @@ The directive ```$xtorage-form``` exposes three attributes:
 
    angular
         .module('myAwesomeModule', ['emd.ng-xtorage-form'])
+        .constant('CONSTANT_KEY', 'constantKey')
         .controller('MyAwesomeController', function($scope)
         {
             $scope.model = {};
@@ -54,6 +55,7 @@ The directive ```$xtorage-form``` exposes three attributes:
               $xtorage-form
                   storage="sessionStorage"
                   storage-key="KeyGoesHere"
+                  storage-key-const="CONSTANT_KEY"
                   info-to-be-saved="{{model}}" >
                     <input type="text" ng-model="model.name" />
                     <input type="text" ng-model="model.age" />
@@ -65,7 +67,7 @@ The directive ```$xtorage-form``` exposes three attributes:
 
 What that'll do is: **As soon as the model changes, it'll be saved to the storage.**
 
-Where, the model is the ```{{model}}```, the storage is: ```storage``` and the key is ```KeyGoesHere```.
+Where, the model is the ```{{model}}```, the storage is: ```storage``` and the key is ```KeyGoesHere```, as soon as ```storage-key-const``` is not defined, because the constant overrides text ```storage-key```.
 
 # ng-xtorage
 
