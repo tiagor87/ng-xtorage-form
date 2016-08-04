@@ -2,10 +2,12 @@
 
 describe('$xtorageForm', function()
 {
-    var _scope, _compile, _element, _form, _xtorage;
-    var _html;
+    var _scope, _compile, _element, _form, _formConst, _xtorage;
+    var _html, _htmlConst, _elementConst;
 
-    beforeEach(module('emd.ng-xtorage-form'));
+    beforeEach(module('emd.ng-xtorage-form', function ($provide) {
+        $provide.constant('FORM_KEY', 'formKey');
+    }));
 
     beforeEach(inject(function($injector)
     {
@@ -13,7 +15,7 @@ describe('$xtorageForm', function()
         _compile = $injector.get('$compile');
         _xtorage = $injector.get('$xtorage');
 
-        _scope.model = {a: "1", b: {z: "x"}, c: true, d: 1.5};
+        _scope.model = {a: "1", b: {z: "x"}, c: true, d: 1.5, e: "a"};
         _scope.storage = "sessionStorage";
 
         _html = '<form name="form" $xtorage-form storage-key="key" info-to-be-saved="{{model}}" storage="{{storage}}">'+
@@ -39,6 +41,30 @@ describe('$xtorageForm', function()
 
             expect(_element).toBeDefined();
             expect(_xtorage.save).toHaveBeenCalled();
+        })
+    })
+
+    describe('injected constant key', function () {
+        beforeEach(function () {
+            _htmlConst = '<form name="formConst" $xtorage-form storage-key="key" storage-key-const="FORM_KEY" info-to-be-saved="{{model}}" storage="{{storage}}">'+
+                            '<input name="input5" type="text" ng-model="model.e"/>' +
+                          '</form>';
+            _elementConst = angular.element(_htmlConst);
+            _compile(_elementConst)(_scope);
+            _formConst = _scope.formConst;
+        })
+
+        it('should have element created and accessible', function () {
+            _scope.$digest();
+            expect(_elementConst).toBeDefined();
+        })
+
+        it('should use constant value to save on the store', function () {
+            _formConst.input5.$setViewValue("test");
+
+            _scope.$digest();
+
+            expect(_xtorage.save).toHaveBeenCalledWith("formKey", angular.toJson(_scope.model), {storage: 'sessionStorage'});
         })
     })
 
